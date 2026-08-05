@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+
+        name="viewport"
+
+        content="width=device-width, initial-scale=1.0"
+
+    >
+
+    <title>Empire - Prototype v0.3</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+    <!-- Main Menu -->
+
+    <section
+
+        id="mainMenu"
+
+        class="screen active"
+
+        aria-label="Main menu"
+
+    >
+
+        <div class="menu">
+
+            <h1>EMPIRE</h1>
+
+            <div class="subtitle">
+
+                Prototype v0.3
+
+            </div>
+
+            <button
+
+                class="main-btn"
+
+                type="button"
+
+                onclick="showSetup()"
+
+            >
+
+                Single Player
+
+            </button>
+
+            <button
+
+                class="main-btn"
+
+                type="button"
+
+                onclick="document.getElementById('mainStatus').textContent = 'No saved games found.'"
+
+            >
+
+                Continue
+
+            </button>
+             <button
+
+                class="main-btn"
+
+                type="button"
+
+                onclick="document.getElementById('mainStatus').textContent = 'Settings will be available in a future version.'"
+
+            >
+
+                Settings
+
+            </button>
+
+            <div
+
+                id="mainStatus"
+
+                class="status"
+
+                aria-live="polite"
+
+            ></div>
+
+        </div>
+
+    </section>
+
+    <!-- Game Setup -->
+
+    <section
+
+        id="gameSetup"
+
+        class="screen"
+
+        aria-label="Game setup"
+
+    >
+
+        <div class="setup">
+
+            <h2>Game Setup</h2>
+
+            <div class="setup-subtitle">
+
+                Shape Your World
+
+            </div>
+
+            <div class="setting-row">
+
+                <div class="setting-label">
+
+                    Map Size
+
+                </div>
+
+                <button
+
+                    id="mapSizeValue"
+
+                    class="value-btn"
+
+                    type="button"
+
+                    onclick="openPicker('mapSizePopup')"
+
+                >
+
+                    Medium
+
+                </button>
+
+            </div>
+
+            <div class="setting-row">
+
+                <div class="setting-label">
+
+                    Civilizations
+
+                </div>
+
+                <button
+
+                    id="civilizationsValue"
+
+                    class="value-btn"
+
+                    type="button"
+
+                    onclick="openPicker('civilizationsPopup')"
+
+                >
+
+                    4
+
+                </button>
+
+            </div>
+
+            <div class="setting-row">
+
+                <div class="setting-label">
+
+                    Difficulty
+
+                </div>
+
+                <button
+
+                    id="difficultyValue"
+
+                    class="value-btn"
+
+                    type="button"
+
+                    onclick="openPicker('difficultyPopup')"
+
+                >
+
+                    Normal
+
+                </button>
+
+            </div>
+
+            <div class="setting-row">
+
+                <div class="setting-label">
+
+                    Game Speed
+
+                </div>
+
+                <button
+
+                    id="gameSpeedValue"
+
+                    class="value-btn"
+
+                    type="button"
+
+                    onclick="openPicker('gameSpeedPopup')"
+
+                >
+
+                    Standard
+
+                </button>
+
+            </div>
+
+            <div class="actions">
+
+                <button
+
+                    class="action-btn"
+
+                    type="button"
+
+                    onclick="showMainMenu()"
+
+                >
+
+                    Back
+
+                </button>
+
+                <button
+
+                    class="action-btn primary"
+
+                    type="button"
+
+                    onclick="startGame()"
+
+                >
+
+                    Start Game
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- Loading Screen -->
+
+    <section
+
+        id="loadingScreen"
+
+        class="screen"
+
+        aria-label="World generation"
+
+    >
+
+        <div class="setup">
+
+            <h2>Generating World</h2>
+
+            <div
+
+                id="loadingText"
+
+                class="setup-subtitle"
+
+                aria-live="polite"
+
+            >
+
+                Initializing World...
+
+            </div>
+
+            <progress
+
+                id="loadingBar"
+
+                value="0"
+
+                max="100"
+
+                aria-label="World generation progress"
+
+            >
+
+                0%
+
+            </progress>
+
+        </div>
+
+    </section>
+
+    <!-- Game Map -->
+
+    <section
+
+        id="gameScreen"
+
+        class="screen"
+
+        aria-label="Game map"
+
+    >
+
+        <div class="game-view">
+
+            <h2>First Island</h2>
+
+            <div
+
+                id="tileInfo"
+
+                class="status"
+
+                aria-live="polite"
+
+            >
+
+                Move to a tile to hear its coordinates and terrain.
+
+            </div>
+
+            <div
+
+                id="gameMap"
+
+                class="game-map"
+
+                aria-label="First Island map, 10 rows by 10 columns"
+
+            ></div>
+
+            <div
+
+                id="tileDetails"
+
+                class="tile-details"
+
+                aria-live="polite"
+
+            >
+
+                Select a tile for detailed information.
+
+            </div>
+
+            <button
+
+                class="action-btn"
+
+                type="button"
+
+                onclick="showMainMenu()"
+
+            >
+
+                Return to Main Menu
+
+            </button>
+
+        </div>
+
+    </section>
+
+    <!-- Map Size Pop-up -->
+
+    <div
+
+        id="mapSizePopup"
+
+        class="modal-backdrop"
+
+        role="dialog"
+
+        aria-modal="true"
+
+        aria-label="Choose map size"
+
+    >
+
+        <div class="modal">
+
+            <h3>Choose Map Size</h3>
+
+            <button
+
+                class="option-btn"
+
+                type="button"
+
+                onclick="setValue('mapSizeValue', 'Small', 'mapSizePopup')"
+
+            >
+
+                Small
+
+            </button>
+
+            <button
+
+                class="option-btn"
+
+                type="button"
+
+                onclick="setValue('mapSizeValue', 'Medium', 'mapSizePopup')"
+
+            >
+
+                Medium
+
+            </button>
+
+            <button
+
+                class="option-btn"
+
+                type="button"
+
+                onclick="setValue('mapSizeValue', 'Large', 'mapSizePopup')"
+
+            >
+
+                Large
+
+            </button>
+
+            <button
+
+                class="option-btn"
+
+                type="button"
+
+                onclick="setValue('mapSizeValue', 'Huge', 'mapSizePopup')"
+
+            >
+
+                Huge
+
+            </button>
+
+            <button
+
+                class="option-btn close-btn"
+
+                type="button"
+
+                onclick="closePicker('mapSizePopup')"
+
+            >
+
+                Close
+
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- Civilizations Pop-up -->
+
+    <div
+
+        id="civilizationsPopup"
+
+        class="modal-backdrop"
+
+        role="dialog"
+
+        aria-modal="true"
+
+        aria-label="Choose number of civilizations"
+
+    >
+
+        <div class="modal">
+
+            <h3>Choose Civilizations</h3>
+
+            <button
+
+                class="option-btn"
+
+                type="button"
+
+                onclick="setValue('civilizationsValue', '2', 'civilizationsPopup')"
+
+            >
+
+                2
+
+            </button>
+
+            <button
+
+                class="option-btn"
+
+                type="button"
+
+                onclick="setValue('civilizationsValue', '3', 'civilizationsPopup')"
+
+            >
+
+                3
+
+            </button>
+
+            <button
+
+                class="option-btn"
+
+                type="button"
+
+                onclick="setValue('civilizationsValue', '4', 'civilizationsPopup')"
+
+            >
+
+                4
+
+            </button>
+
+            <button
+
+                class="option-btn"
+
+                type="button"
+
+                onclick="setValue('civilizationsValue', '5', 'civilizationsPopup')"
+
+            >
+
+                5
+
+            </button>
+
+            <button
+
+                class="option-btn"
+
+                type="button"
+
+                onclick="setValue('civilizationsValue', '6', 'civilizationsPopup')"
+
+            >
+
+                6
+
+            </button>
+
+            <button
+
+                class="option-btn"
+
+                type="button"
+
+                onclick="setValue('civilizationsValue', '7', 'civilizationsPopup')"
+
+            >
+
+                7
+
+            </button>
+
+            <button
+
+                class="option-btn"
+
+                type="button"
+
+                onclick="setValue('civilizationsValue', '8', 'civilizationsPopup')"
+
+            >
+
+                8
+
+            </button>
+
+            <button
+
+                class="option-btn close-btn"
+
+                type="button"
+
+                onclick="closePicker('civilizationsPopup')"
+
+            >
+
+                Close
+
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- Difficulty Pop-up -->
+
+    <div
+
+        id="difficultyPopup"
+
+        class="modal-backdrop"
+
+        role="dialog"
+
+        aria-modal="true"
+
+        aria-label="Choose difficulty"
+
+    >
+
+        <div class="modal">
+
+            <h3>Choose Difficulty</h3>
+
+            <button
+
+                class="option-btn"
+
+                type="button"
+
+                onclick="setValue('difficultyValue', 'Easy', 'difficultyPopup')"
+
+            >
+
+                Easy
+
+            </button>
+
+            <button
+
+                class="option-btn"
+
+                type="button"
+
+                onclick="setValue('difficultyValue', 'Normal', 'difficultyPopup')"
+
+            >
+
+                Normal
+
+            </button>
+
+            <button
+
+                class="option-btn"
+
+                type="button"
+
+                onclick="setValue('difficultyValue', 'Hard', 'difficultyPopup')"
+
+            >
+
+                Hard
+
+            </button>
+
+            <button
+
+                class="option-btn close-btn"
+
+                type="button"
+
+                onclick="closePicker('difficultyPopup')"
+
+            >
+
+                Close
+
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- Game Speed Pop-up -->
+
+    <div
+
+        id="gameSpeedPopup"
+
+        class="modal-backdrop"
+
+        role="dialog"
+
+        aria-modal="true"
+
+        aria-label="Choose game speed"
+
+    >
+
+        <div class="modal">
+
+            <h3>Choose Game Speed</h3>
+
+            <button
+
+                class="option-btn"
+
+                type="button"
+
+                onclick="setValue('gameSpeedValue', 'Quick', 'gameSpeedPopup')"
+
+            >
+
+                Quick
+
+            </button>
+
+            <button
+
+                class="option-btn"
+
+                type="button"
+
+                onclick="setValue('gameSpeedValue', 'Standard', 'gameSpeedPopup')"
+
+            >
+
+                Standard
+
+            </button>
+
+            <button
+
+                class="option-btn"
+
+                type="button"
+
+                onclick="setValue('gameSpeedValue', 'Epic', 'gameSpeedPopup')"
+
+            >
+
+                Epic
+
+            </button>
+
+            <button
+
+                class="option-btn close-btn"
+
+                type="button"
+
+                onclick="closePicker('gameSpeedPopup')"
+
+            >
+
+                Close
+
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- Game Files -->
+
+    <script src="tutorial.js"></script>
+
+    <script src="map.js"></script>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
