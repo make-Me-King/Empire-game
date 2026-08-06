@@ -1,6 +1,6 @@
 /* Empire - style.css */
 
-/* Version 0.3 */
+/* Version 0.4 */
 
 :root {
 
@@ -126,7 +126,7 @@ button {
 
 }
 
-/* Main menu */
+/* Main Menu */
 
 .menu h1 {
 
@@ -248,7 +248,7 @@ button {
 
 }
 
-/* Game setup */
+/* Game Setup */
 
 .setup h2,
 
@@ -560,7 +560,7 @@ button {
 
 }
 
-/* Loading screen */
+/* Loading Screen */
 
 #loadingBar {
 
@@ -620,7 +620,7 @@ button {
 
 }
 
-/* Game map */
+/* Game Map */
 
 .game-view {
 
@@ -632,13 +632,11 @@ button {
 
 .game-map {
 
-    display: grid;
+    display: block;
 
     width: min(94vw, 900px);
 
     margin: 24px auto;
-
-    gap: 4px;
 
     overflow-x: auto;
 
@@ -652,6 +650,26 @@ button {
 
 }
 
+.map-row {
+
+    display: grid;
+
+    grid-template-columns:
+
+        repeat(10, minmax(52px, 1fr));
+
+    gap: 4px;
+
+    margin-bottom: 4px;
+
+}
+
+.map-row:last-child {
+
+    margin-bottom: 0;
+
+}
+
 .map-tile {
 
     min-width: 58px;
@@ -660,7 +678,9 @@ button {
 
     padding: 4px;
 
-    border: 1px solid rgba(255, 255, 255, 0.20);
+    border:
+
+        1px solid rgba(255, 255, 255, 0.20);
 
     border-radius: 5px;
 
@@ -689,6 +709,8 @@ button {
 .map-tile:hover,
 
 .map-tile:focus-visible {
+
+    position: relative;
 
     z-index: 2;
 
@@ -723,7 +745,8 @@ button {
         );
 
 }
- .terrain-plains {
+
+.terrain-plains {
 
     background:
 
@@ -781,7 +804,9 @@ button {
 
     padding: 16px;
 
-    border: 1px solid rgba(212, 175, 55, 0.25);
+    border:
+
+        1px solid rgba(212, 175, 55, 0.25);
 
     border-radius: 8px;
 
@@ -800,8 +825,7 @@ button:focus {
     outline: none;
 
 }
-
-button:focus-visible {
+ button:focus-visible {
 
     outline: 3px solid var(--gold-light);
 
@@ -865,7 +889,15 @@ button:focus-visible {
 
     .game-map {
 
-        justify-content: start;
+        width: 100%;
+
+    }
+
+    .map-row {
+
+        grid-template-columns:
+
+            repeat(10, 52px);
 
     }
 
