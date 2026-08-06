@@ -1,6 +1,6 @@
 // Empire - map.js
 
-// Version 0.3
+// Version 0.4
 
 // Map and Tile Engine
 
@@ -62,82 +62,135 @@ function drawMap(mapData) {
 
     mapContainer.innerHTML = "";
 
-    mapContainer.style.gridTemplateColumns =
+    mapContainer.setAttribute("role", "grid");
 
-        `repeat(${mapData.columns}, 1fr)`;
+    mapContainer.setAttribute("aria-rowcount", mapData.rows);
 
-    mapData.tiles.forEach(tileData => {
+    mapContainer.setAttribute("aria-colcount", mapData.columns);
 
-        const tile = createTile(
+    for (let row = 1; row <= mapData.rows; row++) {
 
-            tileData.row,
+        const rowContainer = document.createElement("div");
 
-            tileData.column,
+        rowContainer.className = "map-row";
 
-            tileData.terrain
+        rowContainer.setAttribute("role", "row");
 
-        );
-
-        Object.assign(tile, tileData);
-        const unitsOnTile =
-
-    typeof getUnitsAtTile === "function"
-
-        ? getUnitsAtTile(tile.row, tile.column)
-
-        : [];
-
-if (unitsOnTile.length > 0) {
-
-    tile.unit = unitsOnTile
-
-        .map(unit => unit.type)
-
-        .join(", ");
-
-}
-
-        const button = document.createElement("button");
-
-        button.className =
-
-            "map-tile terrain-" +
-
-            tile.terrain.toLowerCase();
-
-        button.textContent =
-
-            tile.row + "," + tile.column;
-
-        button.dataset.row = tile.row;
-
-        button.dataset.column = tile.column;
-
-        button.dataset.terrain = tile.terrain;
-
-        button.setAttribute(
+        rowContainer.setAttribute(
 
             "aria-label",
 
-            createTileDescription(tile)
+            "Map row " + row
 
         );
 
-        button.addEventListener("focus", function () {
+        const rowTiles = mapData.tiles
 
-            announceTileDescription(tile);
+            .filter(tileData => tileData.row === row)
+
+            .sort((firstTile, secondTile) => {
+
+                return firstTile.column - secondTile.column;
+
+            });
+
+        rowTiles.forEach(tileData => {
+
+            const tile = createTile(
+
+                tileData.row,
+
+                tileData.column,
+
+                tileData.terrain
+
+            );
+
+            Object.assign(tile, tileData);
+
+            const unitsOnTile =
+
+                typeof getUnitsAtTile === "function"
+
+                    ? getUnitsAtTile(tile.row, tile.column)
+
+                    : [];
+
+            if (unitsOnTile.length > 0) {
+
+                tile.unit = unitsOnTile
+
+                    .map(unit => unit.type)
+
+                    .join(", ");
+
+            }
+
+            const button = document.createElement("button");
+
+            button.type = "button";
+
+            button.className =
+
+                "map-tile terrain-" +
+
+                tile.terrain.toLowerCase();
+
+            button.textContent =
+
+                tile.row + "," + tile.column;
+
+            button.dataset.row = tile.row;
+
+            button.dataset.column = tile.column;
+
+            button.dataset.terrain = tile.terrain;
+
+            button.setAttribute("role", "gridcell");
+
+            button.setAttribute(
+
+                "aria-rowindex",
+
+                tile.row
+
+            );
+
+            button.setAttribute(
+
+                "aria-colindex",
+
+                tile.column
+
+            );
+
+            button.setAttribute(
+
+                "aria-label",
+
+                createTileDescription(tile)
+
+            );
+
+            button.addEventListener("focus", function () {
+
+                announceTileDescription(tile);
+
+            });
+
+            button.addEventListener("click", function () {
+
+                openTileDetails(tile);
+
+            });
+
+            rowContainer.appendChild(button);
 
         });
 
-        button.addEventListener("click", function () {
+        mapContainer.appendChild(rowContainer);
 
-            openTileDetails(tile);
-
-        });
-
-        mapContainer.appendChild(button);
-
-    });
+    }
 
     const firstTile =
 
@@ -193,13 +246,21 @@ function createTileDescription(tile) {
 
     if (tile.improvement) {
 
-        text += ". Improvement: " + tile.improvement;
+        text +=
+
+            ". Improvement: " +
+
+            tile.improvement;
 
     }
 
     if (tile.resource) {
 
-        text += ". Resource: " + tile.resource;
+        text +=
+
+            ". Resource: " +
+
+            tile.resource;
 
     }
 
