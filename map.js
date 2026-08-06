@@ -2,7 +2,7 @@
 
 // Version 0.4
 
-// Map and Tile Engine
+// Accessible Map and Tile Engine
 
 function createTile(row, column, terrain) {
 
@@ -38,7 +38,7 @@ function loadTutorialMap() {
 
     if (typeof tutorialMap === "undefined") {
 
-        console.error("Tutorial map not found.");
+        console.error("Tutorial map data was not found.");
 
         return;
 
@@ -54,7 +54,7 @@ function drawMap(mapData) {
 
     if (!mapContainer) {
 
-        console.error("gameMap element not found.");
+        console.error("The gameMap element was not found.");
 
         return;
 
@@ -62,27 +62,13 @@ function drawMap(mapData) {
 
     mapContainer.innerHTML = "";
 
-    mapContainer.setAttribute("role", "grid");
-
-    mapContainer.setAttribute("aria-rowcount", mapData.rows);
-
-    mapContainer.setAttribute("aria-colcount", mapData.columns);
-
     for (let row = 1; row <= mapData.rows; row++) {
 
         const rowContainer = document.createElement("div");
 
         rowContainer.className = "map-row";
 
-        rowContainer.setAttribute("role", "row");
-
-        rowContainer.setAttribute(
-
-            "aria-label",
-
-            "Map row " + row
-
-        );
+        rowContainer.dataset.row = row;
 
         const rowTiles = mapData.tiles
 
@@ -108,83 +94,11 @@ function drawMap(mapData) {
 
             Object.assign(tile, tileData);
 
-            const unitsOnTile =
+            addUnitsToTile(tile);
 
-                typeof getUnitsAtTile === "function"
+            const tileButton = createTileButton(tile);
 
-                    ? getUnitsAtTile(tile.row, tile.column)
-
-                    : [];
-
-            if (unitsOnTile.length > 0) {
-
-                tile.unit = unitsOnTile
-
-                    .map(unit => unit.type)
-
-                    .join(", ");
-
-            }
-
-            const button = document.createElement("button");
-
-            button.type = "button";
-
-            button.className =
-
-                "map-tile terrain-" +
-
-                tile.terrain.toLowerCase();
-
-            button.textContent =
-
-                tile.row + "," + tile.column;
-
-            button.dataset.row = tile.row;
-
-            button.dataset.column = tile.column;
-
-            button.dataset.terrain = tile.terrain;
-
-            button.setAttribute("role", "gridcell");
-
-            button.setAttribute(
-
-                "aria-rowindex",
-
-                tile.row
-
-            );
-
-            button.setAttribute(
-
-                "aria-colindex",
-
-                tile.column
-
-            );
-
-            button.setAttribute(
-
-                "aria-label",
-
-                createTileDescription(tile)
-
-            );
-
-            button.addEventListener("focus", function () {
-
-                announceTileDescription(tile);
-
-            });
-
-            button.addEventListener("click", function () {
-
-                openTileDetails(tile);
-
-            });
-
-            rowContainer.appendChild(button);
+            rowContainer.appendChild(tileButton);
 
         });
 
@@ -192,9 +106,7 @@ function drawMap(mapData) {
 
     }
 
-    const firstTile =
-
-        mapContainer.querySelector(".map-tile");
+    const firstTile = mapContainer.querySelector(".map-tile");
 
     if (firstTile) {
 
@@ -204,87 +116,177 @@ function drawMap(mapData) {
 
 }
 
+function addUnitsToTile(tile) {
+
+    if (typeof getUnitsAtTile !== "function") {
+
+        return;
+
+    }
+
+    const unitsOnTile = getUnitsAtTile(
+
+        tile.row,
+
+        tile.column
+
+    );
+
+    if (unitsOnTile.length === 0) {
+
+        return;
+
+    }
+
+    tile.unit = unitsOnTile
+
+        .map(unit => unit.type)
+
+        .join(", ");
+
+    const owners = [
+
+        ...new Set(
+
+            unitsOnTile.map(unit => unit.owner)
+
+        )
+
+    ];
+
+    tile.owner = owners.join(", ");
+
+}
+
+function createTileButton(tile) {
+
+    const tileButton = document.createElement("button");
+
+    tileButton.type = "button";
+
+    tileButton.className =
+
+        "map-tile terrain-" +
+
+        tile.terrain.toLowerCase();
+
+    tileButton.textContent =
+
+        tile.row + "," + tile.column;
+
+    tileButton.dataset.row = tile.row;
+
+    tileButton.dataset.column = tile.column;
+
+    tileButton.dataset.terrain = tile.terrain;
+
+    /*
+
+     * The tile remains a normal button.
+
+     * We deliberately do not change it to role="gridcell",
+
+     * because VoiceOver handles native buttons more reliably.
+
+     */
+
+    tileButton.setAttribute(
+
+        "aria-label",
+
+        createTileDescription(tile)
+
+    );
+
+    tileButton.addEventListener("focus", function () {
+
+        announceTileDescription(tile);
+
+    });
+
+    tileButton.addEventListener("click", function () {
+
+        openTileDetails(tile);
+
+    });
+
+    return tileButton;
+
+}
+
 function createTileDescription(tile) {
 
-    let text =
+    const information = [
 
-        "Tile " +
+        "Tile " + tile.row + "," + tile.column,
 
-        tile.row +
+        tile.terrain
 
-        "," +
-
-        tile.column +
-
-        ". " +
-
-        tile.terrain;
+    ];
 
     if (tile.city) {
 
-        text += ". City: " + tile.city;
+        information.push("City: " + tile.city);
 
     }
 
     if (tile.unit) {
 
-        text += ". Unit: " + tile.unit;
+        information.push("Unit: " + tile.unit);
 
     }
 
     if (tile.road) {
 
-        text += ". Road";
+        information.push("Road");
 
     }
 
     if (tile.fort) {
 
-        text += ". Fort";
+        information.push("Fort");
 
     }
 
     if (tile.improvement) {
 
-        text +=
+        information.push(
 
-            ". Improvement: " +
+            "Improvement: " + tile.improvement
 
-            tile.improvement;
+        );
 
     }
 
     if (tile.resource) {
 
-        text +=
+        information.push(
 
-            ". Resource: " +
+            "Resource: " + tile.resource
 
-            tile.resource;
+        );
 
     }
 
     if (tile.river) {
 
-        text += ". River";
+        information.push("River");
 
     }
 
     if (tile.owner) {
 
-        text += ". Owner: " + tile.owner;
+        information.push("Owner: " + tile.owner);
 
     }
 
-    return text + ".";
+    return information.join(". ") + ".";
 
 }
 
 function announceTileDescription(tile) {
 
-    const tileInfo =
-
-        document.getElementById("tileInfo");
+    const tileInfo = document.getElementById("tileInfo");
 
     if (!tileInfo) {
 
@@ -300,9 +302,7 @@ function announceTileDescription(tile) {
 
 function openTileDetails(tile) {
 
-    const details =
-
-        document.getElementById("tileDetails");
+    const details = document.getElementById("tileDetails");
 
     if (!details) {
 
@@ -310,50 +310,34 @@ function openTileDetails(tile) {
 
     }
 
-    details.innerHTML =
+    const detailedInformation = [
 
-        "<strong>Tile:</strong> " +
+        "Tile: " + tile.row + "," + tile.column,
 
-        tile.row +
+        "Terrain: " + tile.terrain,
 
-        "," +
+        "Owner: " + (tile.owner || "None"),
 
-        tile.column +
+        "City: " + (tile.city || "None"),
 
-        "<br><strong>Terrain:</strong> " +
+        "Unit: " + (tile.unit || "None"),
 
-        tile.terrain +
+        "Road: " + (tile.road ? "Yes" : "No"),
 
-        "<br><strong>Owner:</strong> " +
+        "River: " + (tile.river ? "Yes" : "No"),
 
-        (tile.owner || "None") +
+        "Fort: " + (tile.fort ? "Yes" : "No"),
 
-        "<br><strong>City:</strong> " +
+        "Resource: " + (tile.resource || "None"),
 
-        (tile.city || "None") +
+        "Improvement: " +
 
-        "<br><strong>Unit:</strong> " +
+            (tile.improvement || "None")
 
-        (tile.unit || "None") +
+    ];
 
-        "<br><strong>Road:</strong> " +
+    details.textContent =
 
-        (tile.road ? "Yes" : "No") +
-
-        "<br><strong>River:</strong> " +
-
-        (tile.river ? "Yes" : "No") +
-
-        "<br><strong>Fort:</strong> " +
-
-        (tile.fort ? "Yes" : "No") +
-
-        "<br><strong>Resource:</strong> " +
-
-        (tile.resource || "None") +
-
-        "<br><strong>Improvement:</strong> " +
-
-        (tile.improvement || "None");
+        detailedInformation.join(". ") + ".";
 
 }
