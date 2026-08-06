@@ -96,6 +96,8 @@ button {
 
 }
 
+/* Screens */
+
 .screen {
 
     display: none;
@@ -200,51 +202,29 @@ button {
 
     cursor: pointer;
 
-    transition:
-
-        transform 0.18s ease,
-
-        border-color 0.18s ease,
-
-        color 0.18s ease,
-
-        box-shadow 0.18s ease,
-
-        background 0.18s ease;
-
 }
 
-.main-btn:hover,
+/* Shared focus style */
 
-.main-btn:focus-visible {
+.main-btn:focus-visible,
 
-    transform: scale(1.025);
+.value-btn:focus-visible,
 
-    border-color: var(--gold);
+.action-btn:focus-visible,
 
-    color: #fff2b2;
+.option-btn:focus-visible,
 
-    background:
+.map-tile:focus-visible {
 
-        linear-gradient(
+    border-color: var(--gold-light);
 
-            180deg,
+    outline: 3px solid var(--gold-light);
 
-            #211b0d 0%,
-
-            #0b0b0b 100%
-
-        );
+    outline-offset: 3px;
 
     box-shadow:
 
-        0 0 18px var(--gold-glow),
-
-        inset 0 0 12px rgba(212, 175, 55, 0.06);
-
-    outline: 3px solid rgba(240, 215, 123, 0.35);
-
-    outline-offset: 3px;
+        0 0 16px var(--gold-glow);
 
 }
 
@@ -338,18 +318,6 @@ button {
 
     cursor: pointer;
 
-    transition:
-
-        transform 0.18s ease,
-
-        border-color 0.18s ease,
-
-        color 0.18s ease,
-
-        box-shadow 0.18s ease,
-
-        background 0.18s ease;
-
 }
 
 .value-btn {
@@ -361,48 +329,6 @@ button {
     font-size: 18px;
 
     text-align: center;
-
-}
-
-.value-btn:hover,
-
-.value-btn:focus-visible,
-
-.action-btn:hover,
-
-.action-btn:focus-visible,
-
-.option-btn:hover,
-
-.option-btn:focus-visible {
-
-    transform: scale(1.015);
-
-    border-color: var(--gold);
-
-    color: #fff2b2;
-
-    background:
-
-        linear-gradient(
-
-            180deg,
-
-            #211b0d 0%,
-
-            #0b0b0b 100%
-
-        );
-
-    box-shadow:
-
-        0 0 14px var(--gold-glow);
-
-    outline:
-
-        3px solid rgba(240, 215, 123, 0.32);
-
-    outline-offset: 2px;
 
 }
 
@@ -446,10 +372,6 @@ button {
 
     color: #fff0a6;
 
-    box-shadow:
-
-        0 0 12px rgba(212, 175, 55, 0.12);
-
 }
 
 .status {
@@ -472,7 +394,7 @@ button {
 
     inset: 0;
 
-    z-index: 10;
+    z-index: 1000;
 
     display: none;
 
@@ -482,9 +404,7 @@ button {
 
     padding: 22px;
 
-    background: rgba(0, 0, 0, 0.86);
-
-    backdrop-filter: blur(3px);
+    background: rgba(0, 0, 0, 0.88);
 
 }
 
@@ -541,6 +461,8 @@ button {
 }
 
 .option-btn {
+
+    display: block;
 
     width: 100%;
 
@@ -632,21 +554,23 @@ button {
 
 .game-map {
 
-    display: block;
-
     width: min(94vw, 900px);
 
     margin: 24px auto;
 
+    padding: 10px;
+
     overflow-x: auto;
 
-    padding: 10px;
+    overflow-y: hidden;
 
     border: 1px solid var(--gold-dark);
 
     border-radius: 10px;
 
     background: var(--panel);
+
+    -webkit-overflow-scrolling: touch;
 
 }
 
@@ -656,7 +580,9 @@ button {
 
     grid-template-columns:
 
-        repeat(10, minmax(52px, 1fr));
+        repeat(10, 58px);
+
+    width: max-content;
 
     gap: 4px;
 
@@ -671,6 +597,10 @@ button {
 }
 
 .map-tile {
+
+    width: 58px;
+
+    height: 58px;
 
     min-width: 58px;
 
@@ -696,17 +626,7 @@ button {
 
         0 1px 2px rgba(0, 0, 0, 0.85);
 
-    transition:
-
-        transform 0.12s ease,
-
-        border-color 0.12s ease,
-
-        box-shadow 0.12s ease;
-
 }
-
-.map-tile:hover,
 
 .map-tile:focus-visible {
 
@@ -714,21 +634,11 @@ button {
 
     z-index: 2;
 
-    transform: scale(1.08);
-
-    border-color: var(--gold-light);
-
-    box-shadow:
-
-        0 0 12px rgba(240, 215, 123, 0.70);
-
-    outline:
-
-        3px solid var(--gold-light);
-
-    outline-offset: 2px;
+    transform: scale(1.05);
 
 }
+
+/* Terrain */
 
 .terrain-sea {
 
@@ -743,8 +653,7 @@ button {
             var(--sea)
 
         );
-
-}
+ }
 
 .terrain-plains {
 
@@ -794,6 +703,8 @@ button {
 
 }
 
+/* Tile Details */
+
 .tile-details {
 
     width: min(92vw, 720px);
@@ -818,20 +729,7 @@ button {
 
 }
 
-/* Accessibility */
-
-button:focus {
-
-    outline: none;
-
-}
- button:focus-visible {
-
-    outline: 3px solid var(--gold-light);
-
-    outline-offset: 3px;
-
-}
+/* Reduced Motion */
 
 @media (prefers-reduced-motion: reduce) {
 
@@ -852,8 +750,7 @@ button:focus {
 }
 
 /* Mobile */
-
-@media (max-width: 520px) {
+ @media (max-width: 520px) {
 
     .screen {
 
@@ -902,6 +799,10 @@ button:focus {
     }
 
     .map-tile {
+
+        width: 52px;
+
+        height: 52px;
 
         min-width: 52px;
 
