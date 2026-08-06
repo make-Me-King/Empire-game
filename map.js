@@ -79,6 +79,23 @@ function drawMap(mapData) {
         );
 
         Object.assign(tile, tileData);
+        const unitsOnTile =
+
+    typeof getUnitsAtTile === "function"
+
+        ? getUnitsAtTile(tile.row, tile.column)
+
+        : [];
+
+if (unitsOnTile.length > 0) {
+
+    tile.unit = unitsOnTile
+
+        .map(unit => unit.type)
+
+        .join(", ");
+
+}
 
         const button = document.createElement("button");
 
